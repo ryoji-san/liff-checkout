@@ -1,0 +1,24 @@
+version: '3'
+# https://docs.docker.com/compose/compose-file/compose-file-v3/
+# https://hub.docker.com/_/mysql
+services:
+  liff-checkout:
+    build: .
+    image: liff-checkout
+    environment:
+      TZ: Asia/Tokyo
+    container_name: liff-checkout
+    platform: linux/arm64/v8
+    tty: true
+    ports:
+      - "5003:5173"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - cube-tax
+      - default
+
+networks:
+  cube-tax:
+    external: true
