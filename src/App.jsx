@@ -27,14 +27,15 @@ const createCheckoutSession = async (payload) => {
         body: JSON.stringify(options)
     })
     const body = await response.json()
-    if(import.meta.env.DEV) window.alert(`stripe response: ${JSON.stringify(body)}`)
+    if (import.meta.env.DEV) window.alert(`stripe response: ${JSON.stringify(body)}`)
     return body.session
 }
 
 const CheckoutSuccess = (props) => (
     <section>
         <div className="imgBox">
-            <img src={`/illust-top-invoice.png`} height="auto" width="80%" className="image-section"/>
+            <img src={`/illust-top-invoice.png`} height="auto" width="80%"
+                 className="image-section"/>
         </div>
         <div className="wrapper">
             <a href={`${GOOGLE_FORMS_URL}${props.clientReferenceId}`}
@@ -75,7 +76,7 @@ function App() {
     useEffect(() => {
         (async () => {
             // 決済からの戻りの場合はここで終了する
-            if(status === 'true' && clientReferenceId) return
+            if (status === 'true' && clientReferenceId) return
             // 決済完了前のセッションの場合はここから処理を介し
             let ignore = false;
             if (import.meta.env.DEV) window.alert(`１つ目のuseEffect() 動き始めました。`)
@@ -87,7 +88,7 @@ function App() {
                         if (!ignore) {
                             ignore = true
                             liff.login()
-                        }else{
+                        } else {
                             return
                         }
                     }
@@ -99,7 +100,7 @@ function App() {
                         const idToken = liff.getIDToken()
                         setUserId(profile.userId)
                         setIdToken(idToken)
-                    }else{
+                    } else {
                         return
                     }
                     if (import.meta.env.DEV) window.alert(`useEffect()①終了します。`)
@@ -109,7 +110,7 @@ function App() {
     useEffect(() => {
         (async () => {
             if (!userId) return
-            if(status === 'true' && clientReferenceId) return
+            if (status === 'true' && clientReferenceId) return
             if (import.meta.env.DEV) window.alert(`２つめのuseEffect() 動き始めました。`)
 
             if (!status) {
@@ -135,14 +136,20 @@ function App() {
     }, [userId])
 
     if (status === 'true' && clientReferenceId) {
-        if(!isSent){
+        if (!isSent) {
             setIsSent(true)
             if (import.meta.env.DEV) window.alert(`決済完了しましたメッセージ飛ばします: ${clientReferenceId}`)
-            liff.sendMessages([{
-                type: "text",
-                text: `決済が完了しました。決済ID: ${clientReferenceId}`
-            }])
-        }else{
+            liff.sendMessages([
+                {
+                    type: "text",
+                    text: `決済が完了しました。決済ID: ${clientReferenceId}`
+                },
+                {
+                    type: "text",
+                    text: `アンケートへの回答はこちらから: ${GOOGLE_FORMS_URL}${clientReferenceId}`
+                }
+            ])
+        } else {
             if (import.meta.env.DEV) window.alert(`isSent === true なのでメッセージは贈りません。: ${isSent}`)
         }
         return (
